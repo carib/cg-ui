@@ -38,18 +38,20 @@ export class CgDropdownOption {
   }
 
   changeHandler = (event: Event) => {
+    event.stopPropagation();
     this.selected = event.target['checked'];
-    console.log(this.isSelected);
-    this.cgDropdownOptionChanged.emit({
-      optionId: this.optionId,
-      isSelected: this.isSelected,
-      isHidden: this.isHidden,
-      el: this.el
-    });
+    this.emitChangeEvent();
   }
 
-  clickHandler = () => {
-    this.selected = !this.selected;
+  clickHandler = (event: Event) => {
+    event.preventDefault();
+    if (!this.hasCheckbox && !this.isSelected) {
+      this.selected = !this.selected;
+      this.emitChangeEvent();
+    }
+  }
+
+  emitChangeEvent() {
     this.cgDropdownOptionChanged.emit({
       optionId: this.optionId,
       isSelected: this.isSelected,
@@ -65,7 +67,9 @@ export class CgDropdownOption {
           <label class={{
             'has-checkbox': this.hasCheckbox,
           }} onClick={this.hasCheckbox ? null : this.clickHandler}>
-            {this.hasCheckbox ? <input type='checkbox' value={this.value} onChange={this.changeHandler}/> : null}
+            <input class={{
+              'has-checkbox': this.hasCheckbox,
+            }} type='checkbox' value={this.value} onChange={this.changeHandler}/>
             <span>{this.value}</span>
           </label>
         </li>
