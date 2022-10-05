@@ -19,7 +19,7 @@ details > summary {
 }
 
 summary::-webkit-details-marker {
-  content: none
+  content: none;
 }
 
 summary::after {
@@ -44,6 +44,7 @@ details[open] summary:after {
   bottom: 0;
   height: 100%;
 }
+
 
 ul > input {
   width: 100%;

@@ -30,5 +30,6 @@ input[type="checkbox"]:not(.has-checkbox) {
 }
 
 :host(:focus-within) {
-  outline: 1px solid pink;
+  outline: none;
+  background-color: #affcff;
 }
