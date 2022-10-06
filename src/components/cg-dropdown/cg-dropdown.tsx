@@ -64,7 +64,7 @@ export class CgDropdown {
     this.syncItemRefs();
   }
 
-  componentDidWillRender() {
+  componentWillRender() {
     this.syncItemRefs();
   }
 
