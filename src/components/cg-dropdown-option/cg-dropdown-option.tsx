@@ -15,6 +15,8 @@ export class CgDropdownOption {
 
   @Prop({reflect: true, mutable: true}) selected: boolean = false;
 
+  @Prop() value: string;
+
   @Prop() hasCheckbox: boolean = false;
 
   @Watch('selected')
@@ -29,13 +31,11 @@ export class CgDropdownOption {
     this.isHidden = newValue;
   }
 
-  @Prop() value: string;
-
-  @Event() cgDropdownOptionChanged: EventEmitter<DropdownOptionChangedEventDetail>;
-
   componentWillLoad() {
     this.optionId = this.optionId || this.value;
   }
+
+  @Event() cgDropdownOptionChanged: EventEmitter<DropdownOptionChangedEventDetail>;
 
   changeHandler = (event: Event) => {
     event.stopPropagation();

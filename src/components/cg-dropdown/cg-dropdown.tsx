@@ -18,13 +18,23 @@ export class CgDropdown {
 
   @State() _multiple: boolean = false;
 
+  @Prop() searchable: boolean = true;
+
   @Prop({reflect: true, attribute: 'multiple'}) multiple = false;
+
   @Watch('multiple')
   multipleChanged(newValue: boolean) {
     this._multiple = newValue;
   }
 
-  @Prop() searchable: boolean = true;
+  componentWillLoad() {
+    this._multiple = this.multiple;
+    this.syncItemRefs();
+  }
+
+  componentWillRender() {
+    this.syncItemRefs();
+  }
 
   @Listen('cgDropdownOptionChanged')
   dropdownOptionChangedHandler(event: CustomEvent) {
@@ -42,7 +52,7 @@ export class CgDropdown {
   }
 
   updateHiddenValues({id, isHidden}) {
-    if (this.itemRefs[id]) this.itemRefs[id].isHidden = isHidden;
+    if (this.itemRefs.hasOwnProperty(id)) this.itemRefs[id].isHidden = isHidden;
     if (Object.values(this.itemRefs).filter(item => item.isHidden).length !== this.hiddenItemIds.length) {
       this.hiddenItemIds = Object.values(this.itemRefs).filter(item => item.isHidden).map(item => item.id);
     }
@@ -59,24 +69,15 @@ export class CgDropdown {
     }
   }
 
-  componentWillLoad() {
-    this._multiple = this.multiple;
-    this.syncItemRefs();
-  }
-
-  componentWillRender() {
-    this.syncItemRefs();
-  }
-
-  syncItemRefs() {
+  syncItemRefs = () => {
     const children = Array.from(this.el.children);
-    if (children) children.forEach((child: HTMLCgDropdownOptionElement) => {
+    if (children.length > 0) children.forEach((child: HTMLCgDropdownOptionElement) => {
       this.syncItemRef(child);
       child.hasCheckbox = this._multiple;
     });
   }
 
-  syncItemRef(item: HTMLCgDropdownOptionElement) {
+  syncItemRef = (item: HTMLCgDropdownOptionElement) => {
     const updatedRef: ItemRef = {
       id: item.optionId || item.value,
       el: item,
@@ -84,7 +85,7 @@ export class CgDropdown {
       isSelected: item.selected,
       isHidden: item.hidden,
     };
-    if (!this.itemRefs[updatedRef.id]) {
+    if (!this.itemRefs.hasOwnProperty(updatedRef.id)) {
       this.itemRefs[updatedRef.id] = updatedRef;
     } else {
       this.itemRefs[updatedRef.id] = {...this.itemRefs[updatedRef.id], ...updatedRef};
@@ -109,7 +110,7 @@ export class CgDropdown {
           </summary>
           <ul>
             {this.searchable ? <input type='text' placeholder='Filter options...' onInput={this.inputHandler}/> : null}
-            <slot onSlotchange={() => this.syncItemRefs}></slot>
+            <slot onSlotchange={this.syncItemRefs}></slot>
           </ul>
         </details>
       </Host>
