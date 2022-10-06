@@ -1,8 +1,14 @@
-import { Config } from '@stencil/core';
+import { Config, Env } from '@stencil/core';
+
+const dev: boolean = process.argv && process.argv.indexOf('--dev') > -1;
+const apiEnv: string = dev ? 'dev' : 'prod';
 
 export const config: Config = {
-  namespace: 'carib-ui',
-  sourceMap: true,
+  namespace: 'cg-ui',
+  sourceMap: apiEnv === 'dev',
+  env: {
+    apiEnv: apiEnv,
+  },
   outputTargets: [
     {
       type: 'dist',
